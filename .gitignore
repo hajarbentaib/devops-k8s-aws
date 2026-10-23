@@ -1,0 +1,33 @@
+# Media & large archives
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.rar
+*.zip
+*.tar.gz
+
+# Python & virtual environments
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+.ipynb_checkpoints/
+
+# Models & heavy weights
+*.pkl
+*.joblib
+*.h5
+*.onnx
+*.pt
+*.pth
+
+# Sensitive data & logs
+.env
+secret.txt
+*.log

@@ -1,0 +1,48 @@
+- name: Installation simple de Kubernetes sur Ubuntu 24.04
+  hosts: all
+  become: yes
+
+  tasks:
+    # 1. Désactiver le swap (obligatoire pour Kubernetes)
+    - name: Désactiver swap
+      shell: |
+        swapoff -a
+        sed -i '/ swap / s/^/#/' /etc/fstab
+
+    # 2. Installer containerd (runtime container)
+    - name: Installer containerd
+      apt:
+        name: containerd
+        state: present
+        update_cache: yes
+
+    - name: Configurer containerd
+      shell: |
+        containerd config default > /etc/containerd/config.toml
+        sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+        systemctl restart containerd
+        systemctl enable containerd
+
+    # 3. Installer Kubernetes
+    - name: Ajouter le dépôt Kubernetes
+      shell: |
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-key.gpg
+        echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-key.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" > /etc/apt/sources.list.d/kubernetes.list
+        apt update
+
+    - name: Installer kubeadm, kubelet, kubectl
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+
+    - name: Empêcher les mises à jour automatiques
+      shell: apt-mark hold kubeadm kubelet kubectl
+
+    - name: Démarrer kubelet
+      systemd:
+        name: kubelet
+        enabled: yes
+        state: started

@@ -1,0 +1,15 @@
+# IMPORTANT : Ce fichier contient des IPs et des informations de connexion.
+# Ne jamais committer ce fichier avec de vraies IPs en production.
+# Ajouter 'ansible/inventory' dans .gitignore ou utiliser des variables d'environnement.
+
+[master]
+# Remplacer par l'IP publique du master générée par Terraform (voir : terraform output master_public_ip)
+MASTER_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/devops-key.pem
+
+[worker]
+# Remplacer par l'IP publique du worker générée par Terraform (voir : terraform output worker_public_ip)
+WORKER_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/devops-key.pem
+
+[all:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_python_interpreter=/usr/bin/python3
